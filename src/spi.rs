@@ -2,7 +2,7 @@
 
 use embedded_hal::delay::blocking::DelayUs;
 use embedded_hal::digital::blocking::OutputPin;
-use embedded_hal::spi::blocking::Transfer;
+use embedded_hal::spi::blocking::SpiBus;
 
 use super::{
     BME280Common, Configuration, Error, IIRFilter, Interface, Measurements, Oversampling,
@@ -17,7 +17,7 @@ pub struct BME280<SPI, CS> {
 
 impl<SPI, CS, SPIE, PinE> BME280<SPI, CS>
 where
-    SPI: Transfer<u8, Error = SPIE>,
+    SPI: SpiBus<u8, Error = SPIE>,
     CS: OutputPin<Error = PinE>,
 {
     /// Create a new BME280 struct
@@ -76,7 +76,7 @@ struct SPIInterface<SPI, CS> {
 
 impl<SPI, CS> Interface for SPIInterface<SPI, CS>
 where
-    SPI: Transfer<u8>,
+    SPI: SpiBus<u8>,
     CS: OutputPin,
 {
     type Error = SPIError<SPI::Error, CS::Error>;
@@ -132,7 +132,7 @@ where
 
 impl<SPI, CS> SPIInterface<SPI, CS>
 where
-    SPI: Transfer<u8>,
+    SPI: SpiBus<u8>,
     CS: OutputPin,
 {
     fn read_any_register(
